@@ -30,7 +30,7 @@ class Program
             while (running)
             {
                 Console.Clear();
-                Console.WriteLine("=== Ponte Luca Pulga ===");
+                Console.WriteLine("==== Ponte Luca Pulga ====");
                 Console.WriteLine("Cliccare uno dei seguenti tasti per eseguire un comando");
                 Console.WriteLine("L → Aggiungi un'auto a sinistra");
                 Console.WriteLine("R → Aggiungi un'auto a destra");
