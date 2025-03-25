@@ -11,10 +11,10 @@ namespace MacchinePontos
         private const int maxVeicoliPontos = 3;
         static string pad = " ";
         static string spazios = "                            ";
-        static string s1 = "\n";
-        static string s2 = "\n";
-        static string s3 = "\n";
-        static string s4 = "\n";
+        static string s1 = "\n"; //corsia 1 di sx
+        static string s2 = "\n"; //corsia 2 di sx
+        static string d1 = "\n                                                          s"; //corsia 1 di dx
+        static string d2 = "\n                                                          s"; //corsia 2 di dx
 
         private static SemaphoreSlim bridgeSemaphore = new SemaphoreSlim(maxVeicoliPontos, maxVeicoliPontos);
         private static SemaphoreSlim shipSemaphore = new SemaphoreSlim(0, 1);
@@ -23,7 +23,13 @@ namespace MacchinePontos
         private Queue<string> rightQueue = new Queue<string>();
         private bool isShipCrossing = false;
 
-        private static string bridge = $"\n{spazios}----------------------------{s1}{s2}{s3}{s4}{spazios}----------------------------";
+        private static string bridge = 
+            $"{spazios}----------------------------" +
+            $"{d1}" +
+            $"{d2}" +
+            $"{s2}" +
+            $"{s1}" +
+            $"{spazios}----------------------------";
         private static string ship = @"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
 
         public void Run()
@@ -44,7 +50,7 @@ namespace MacchinePontos
 
                 Console.WriteLine();
                 Console.WriteLine("Auto a destra: " + string.Join(" ", rightQueue));
-                Console.WriteLine("Auto a sinistra: " + string.Join(" ", leftQueue) + $"                   PONTOS: \n\n\n" + (isShipCrossing ? "Nave in transito..." : bridge));
+                Console.WriteLine("Auto a sinistra: " + string.Join(" ", leftQueue) + $"\n\n                                      PONTOS: \n" + (isShipCrossing ? "Nave in transito..." : bridge));
                 Console.WriteLine();
 
                 var input = Console.ReadKey(true).Key;
@@ -73,33 +79,38 @@ namespace MacchinePontos
         private void AggiungiMacchina(string side)
         {
             if (side == "Sinistra")
-                leftQueue.Enqueue("\nAut sx");
+                leftQueue.Enqueue("Aut sx ");
             else if (side == "Destra")
-                rightQueue.Enqueue("\nAut dx ");
+                rightQueue.Enqueue("Aut dx ");
         }
 
         private void Passaggio()
         {
+
             if (isShipCrossing)
             {
                 Console.WriteLine("Attendere che la nave abbia attraversato il ponte.");
                 return;
             }
 
-
-            if (leftQueue.Count > 0 && leftQueue.Count >= rightQueue.Count)
+            for (int i = 0; i < 3; i++) //faccio passare 3 nacchine alla volta
             {
-                Console.WriteLine("Passaggio auto dalla sinistra...");
-                PassaggioMacchina("Sinistra");
-            }
-            else if (rightQueue.Count > 0 && leftQueue.Count <= rightQueue.Count)
-            {
-                Console.WriteLine("Passaggio auto dalla destra...");
-                PassaggioMacchina("Destra");
-            }
-            else
-            {
-                Console.WriteLine("Non c'è nessuna auto da far passare");
+                if (leftQueue.Count > 0 && leftQueue.Count >= rightQueue.Count)
+                {
+                    s1 += "auto sx"; 
+                    Console.WriteLine("Passaggio auto dalla sinistra...");
+                    PassaggioMacchina("Sinistra");
+                }
+                else if (rightQueue.Count > 0 && leftQueue.Count <= rightQueue.Count)
+                {
+                    d1 += "auto dx";
+                    Console.WriteLine("Passaggio auto dalla destra...");
+                    PassaggioMacchina("Destra");
+                }
+                else
+                {
+                    Console.WriteLine("Non c'è nessuna auto da far passare");
+                }
             }
         }
 
