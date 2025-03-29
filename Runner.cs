@@ -9,50 +9,43 @@ namespace MacchinePontos
     internal class Runner
     {
         private const int maxVeicoliPontos = 3;
-        static string pad = " ";
-        static string spazios = "                            ";
-        static string s1 = "\n"; //corsia 1 di sx
-        static string s2 = "\n"; //corsia 2 di sx
-        static string d1 = "\n                                                          s"; //corsia 1 di dx
-        static string d2 = "\n                                                          s"; //corsia 2 di dx
 
         private static SemaphoreSlim bridgeSemaphore = new SemaphoreSlim(maxVeicoliPontos, maxVeicoliPontos);
-        private static SemaphoreSlim shipSemaphore = new SemaphoreSlim(0, 1);
 
         private Queue<string> leftQueue = new Queue<string>();
         private Queue<string> rightQueue = new Queue<string>();
         private bool isShipCrossing = false;
 
         private static string bridge = 
-            $"{spazios}----------------------------" +
-            $"{d1}" +
-            $"{d2}" +
-            $"{s2}" +
-            $"{s1}" +
-            $"{spazios}----------------------------";
+            $"                         -------------------------------\n\n\n\n" +
+            $"                         -------------------------------";
         private static string ship = @"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
 
+        public void Ponte()
+        {
+            Console.Clear();
+            Console.WriteLine("==== Ponte Luca Pulga ====");
+            Console.WriteLine("Cliccare uno dei seguenti tasti per eseguire un comando");
+            Console.WriteLine("L → Aggiungi un'auto a sinistra");
+            Console.WriteLine("R → Aggiungi un'auto a destra");
+            Console.WriteLine("P → Avvia il passaggio delle auto");
+            Console.WriteLine("S → Simula il passaggio di una nave");
+            Console.WriteLine("E → Esce dal simulatore");
+            Console.WriteLine();
+
+            Console.WriteLine();
+            Console.WriteLine("Auto a destra: " + string.Join(" ", rightQueue));
+            Console.WriteLine("Auto a sinistra: " + string.Join(" ", leftQueue) + $"\n\n                                      PONTOS: \n" + (isShipCrossing ? "Nave in transito..." : bridge));
+            Console.WriteLine();
+        }
         public void Run()
         {
+
             bool running = true;
 
             while (running)
             {
-                Console.Clear();
-                Console.WriteLine("==== Ponte Luca Pulga ====");
-                Console.WriteLine("Cliccare uno dei seguenti tasti per eseguire un comando");
-                Console.WriteLine("L → Aggiungi un'auto a sinistra");
-                Console.WriteLine("R → Aggiungi un'auto a destra");
-                Console.WriteLine("P → Avvia il passaggio delle auto");
-                Console.WriteLine("S → Simula il passaggio di una nave");
-                Console.WriteLine("E → Esce dal simulatore");
-                Console.WriteLine();
-
-                Console.WriteLine();
-                Console.WriteLine("Auto a destra: " + string.Join(" ", rightQueue));
-                Console.WriteLine("Auto a sinistra: " + string.Join(" ", leftQueue) + $"\n\n                                      PONTOS: \n" + (isShipCrossing ? "Nave in transito..." : bridge));
-                Console.WriteLine();
-
+                this.Ponte();
                 var input = Console.ReadKey(true).Key;
 
                 switch (input)
@@ -97,15 +90,52 @@ namespace MacchinePontos
             {
                 if (leftQueue.Count > 0 && leftQueue.Count >= rightQueue.Count)
                 {
-                    s1 += "auto sx"; 
+                    Console.SetCursorPosition(0, 18);
                     Console.WriteLine("Passaggio auto dalla sinistra...");
                     PassaggioMacchina("Sinistra");
+                    Console.SetCursorPosition(10, 15);
+                    Console.WriteLine("auto");
+                    Thread.Sleep(500);
+                    this.Ponte();
+                    Console.SetCursorPosition(30, 15);
+                    Console.WriteLine("auto");
+                    Thread.Sleep(500);
+                    this.Ponte();
+                    Console.SetCursorPosition(50, 15);
+                    Console.WriteLine("auto");
+                    Thread.Sleep(500);
+                    this.Ponte();
+                    Console.SetCursorPosition(70, 15);
+                    Console.WriteLine("auto");
+                    Thread.Sleep(500);
+                    this.Ponte();
+                    Console.SetCursorPosition(90, 15);
+                    Console.WriteLine("auto");
+                    this.Ponte();
                 }
                 else if (rightQueue.Count > 0 && leftQueue.Count <= rightQueue.Count)
                 {
-                    d1 += "auto dx";
+                    Console.SetCursorPosition(0, 18);
                     Console.WriteLine("Passaggio auto dalla destra...");
                     PassaggioMacchina("Destra");
+                    Console.SetCursorPosition(70, 14);
+                    Console.WriteLine("auto");
+                    Thread.Sleep(500);
+                    this.Ponte();
+                    Console.SetCursorPosition(50, 14);
+                    Console.WriteLine("auto");
+                    Thread.Sleep(500);
+                    this.Ponte();
+                    Console.SetCursorPosition(30, 14);
+                    Console.WriteLine("auto");
+                    Thread.Sleep(500);
+                    this.Ponte();
+                    Console.SetCursorPosition(10, 14);
+                    Console.WriteLine("auto");
+                    Thread.Sleep(500);
+                    Console.SetCursorPosition(5, 14);
+                    Console.WriteLine("auto");
+                    this.Ponte();
                 }
                 else
                 {
@@ -135,12 +165,10 @@ namespace MacchinePontos
 
             Console.WriteLine("Nave in transito...");
             isShipCrossing = true;
-            shipSemaphore.Wait();
 
 
             Thread.Sleep(3000);
             isShipCrossing = false;
-            shipSemaphore.Release();
         }
     }
 }
